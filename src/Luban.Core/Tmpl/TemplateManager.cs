@@ -8,7 +8,7 @@ namespace Luban.Tmpl;
 public class TemplateManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     public static TemplateManager Ins { get; } = new();
 
 
@@ -20,7 +20,7 @@ public class TemplateManager
 
     public void Init()
     {
-        string curDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        string curDir = Path.GetDirectoryName(AppContext.BaseDirectory);
         AddTemplateSearchPath($"{curDir}/Templates", true);
     }
 

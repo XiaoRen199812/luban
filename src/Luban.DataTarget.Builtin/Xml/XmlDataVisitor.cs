@@ -60,7 +60,7 @@ public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
 
     public void Accept(DDateTime type, XmlWriter w)
     {
-        w.WriteValue(type.UnixTimeOfCurrentContext);
+        w.WriteValue(type.UnixTimeOfCurrentContext());
     }
 
     public void Accept(DBean type, XmlWriter w)
@@ -118,10 +118,10 @@ public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
 
     public void Accept(DMap type, XmlWriter w)
     {
-        foreach (var (k,v) in type.Datas)
+        foreach (var (k, v) in type.Datas)
         {
             w.WriteStartElement("ele");
-            w.WriteStartElement("key"); 
+            w.WriteStartElement("key");
             k.Apply(this, w);
             w.WriteEndElement();
             w.WriteStartElement("value");

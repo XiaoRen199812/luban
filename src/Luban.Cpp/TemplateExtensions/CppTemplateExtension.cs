@@ -18,11 +18,6 @@ public class CppTemplateExtension : ScriptObject
     {
         return TypeUtil.MakeCppFullName("", typeName);
     }
-    
-    public static string DeclaringTypeName(TType type)
-    {
-        return type.Apply(DeclaringTypeNameVisitor.Ins);
-    }
 
     public static string GetterName(string originName)
     {
@@ -49,5 +44,5 @@ public class CppTemplateExtension : ScriptObject
     {
         return $"(*({varName}))";
     }
-    
+
 }

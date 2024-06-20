@@ -110,7 +110,8 @@ public class RefValidator : DataValidatorBase
                     }
                     break;
                 }
-                default: throw new NotSupportedException();
+                default:
+                    throw new NotSupportedException();
             }
         }
 
@@ -154,7 +155,7 @@ public class RefValidator : DataValidatorBase
         string actualTable = table.FullName;
         string fieldTypeName = type.TypeName;
         string valueTypeName = table.ValueTType.DefBean.FullName;
-        if (!table.NeedExport() && field.NeedExport())
+        if (!table.NeedExport() && field.NeedExport() && field.HostType.Assembly.ExportTables.Any(t => t.ValueTType.DefBean.IsAssignableFrom(field.HostType)))
         {
             throw new Exception($"field:'{field}' ref 引用的表:'{actualTable}' 没有导出");
         }
@@ -176,7 +177,7 @@ public class RefValidator : DataValidatorBase
             {
                 throw new Exception($"field:'{field}' 类型:'{type.TypeName}' 与被引用的表:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} key_type:{tmap.KeyType.TypeName} 不一致");
             }
-            
+
         }
         else if (table.IsMapTable)
         {

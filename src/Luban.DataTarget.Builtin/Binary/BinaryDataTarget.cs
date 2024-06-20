@@ -7,8 +7,8 @@ namespace Luban.DataExporter.Builtin.Binary;
 [DataTarget("bin")]
 public class BinaryDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "bytes";
-    
+    protected override string DefaultOutputFileExt => "bytes";
+
     private void WriteList(DefTable table, List<Record> datas, ByteBuf x)
     {
         x.WriteSize(datas.Count);

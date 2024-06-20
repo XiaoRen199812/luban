@@ -22,17 +22,24 @@ public class ExcelRowColumnDataSource : DataLoaderBase
     {
         s_logger.Trace("{} {}", rawUrl, sheetName);
         RawUrl = rawUrl;
-        
+
         foreach (RawSheet rawSheet in SheetLoadUtil.LoadRawSheets(rawUrl, sheetName, stream))
         {
-            var sheet = new RowColumnSheet(rawUrl, sheetName);
+            var sheet = new RowColumnSheet(rawUrl, sheetName, rawSheet.SheetName);
             sheet.Load(rawSheet);
             _sheets.Add(sheet);
         }
 
         if (_sheets.Count == 0)
         {
-            throw new Exception($"excel:{rawUrl} 不包含有效的单元薄(有效单元薄的A0单元格必须是##).");
+            if (!string.IsNullOrWhiteSpace(sheetName))
+            {
+                throw new Exception($"excel:‘{rawUrl}’ sheet:‘{sheetName}’ 不存在或者不是有效的单元簿(有效单元薄的A0单元格必须是##)");
+            }
+            else
+            {
+                throw new Exception($"excel: ‘{rawUrl}’ 不包含有效的单元薄(有效单元薄的A0单元格必须是##).");
+            }
         }
     }
 
@@ -40,7 +47,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
     {
         foreach (RawSheet rawSheet in rawSheets)
         {
-            var sheet = new RowColumnSheet("__intern__", rawSheet.TableName);
+            var sheet = new RowColumnSheet("__intern__", rawSheet.TableName, rawSheet.SheetName);
             sheet.Load(rawSheet);
             _sheets.Add(sheet);
         }
@@ -67,12 +74,12 @@ public class ExcelRowColumnDataSource : DataLoaderBase
                         continue;
                     }
                     var data = (DBean)type.Apply(SheetDataCreator.Ins, sheet, row);
-                    datas.Add(new Record(data, sheet.RawUrl, DataUtil.ParseTags(tagStr)));
+                    datas.Add(new Record(data, sheet.UrlWithParams, DataUtil.ParseTags(tagStr)));
                 }
             }
             catch (DataCreateException dce)
             {
-                dce.OriginDataLocation = sheet.RawUrl;
+                dce.OriginDataLocation = sheet.UrlWithParams;
                 throw;
             }
             catch (Exception e)

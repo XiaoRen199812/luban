@@ -8,8 +8,8 @@ namespace Luban.DataExporter.Builtin.Yaml;
 [DataTarget("yaml")]
 public class YamlDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "yml";
-    
+    protected override string DefaultOutputFileExt => "yml";
+
     public YamlNode WriteAsArray(List<Record> datas)
     {
 

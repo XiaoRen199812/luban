@@ -5,8 +5,8 @@ namespace Luban.Defs;
 public class Record
 {
     public int AutoIndex { get; set; }
-    
-    public DBean Data { get; }
+
+    public DBean Data { get; set; }
 
     public string Source { get; }
 

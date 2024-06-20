@@ -18,10 +18,13 @@ public class DString : DType<string>
         switch (escapeMode)
         {
             case "0":
-            case "false": return new DString(s);
+            case "false":
+                return new DString(s);
             case "1":
-            case "true": return new DString(System.Text.RegularExpressions.Regex.Unescape(s));
-            default: throw new Exception($"unknown escape mode:{escapeMode}");
+            case "true":
+                return new DString(System.Text.RegularExpressions.Regex.Unescape(s));
+            default:
+                throw new Exception($"unknown escape mode:{escapeMode}");
         }
     }
 
@@ -64,6 +67,21 @@ public class DString : DType<string>
     public override TR Apply<T1, T2, TR>(IDataFuncVisitor<T1, T2, TR> visitor, T1 x, T2 y)
     {
         return visitor.Accept(this, x, y);
+    }
+
+    public override TR Apply<TR>(IDataFuncVisitor2<TR> visitor, TType type)
+    {
+        return visitor.Accept(this, type);
+    }
+
+    public override TR Apply<T, TR>(IDataFuncVisitor2<T, TR> visitor, TType type, T x)
+    {
+        return visitor.Accept(this, type, x);
+    }
+
+    public override TR Apply<T1, T2, TR>(IDataFuncVisitor2<T1, T2, TR> visitor, TType type, T1 x, T2 y)
+    {
+        return visitor.Accept(this, type, x, y);
     }
 
     public override bool Equals(object obj)

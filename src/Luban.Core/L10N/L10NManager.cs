@@ -8,18 +8,11 @@ public class L10NManager
 
     public void Init()
     {
-        
+
     }
 
     public ITextProvider CreateTextProvider(string name)
     {
-        ITextProvider provider = CustomBehaviourManager.Ins.CreateBehaviour<ITextProvider, TextProviderAttribute>(name);
-        provider.Load();
-        return provider;
-    }
-    
-    public ITextProvider GetOrCreateContextUniqueTextProvider(string name)
-    {
-        return (ITextProvider)GenerationContext.Current.GetOrAddUniqueObject($"{BuiltinOptionNames.TextProviderName}.{name}", () => CreateTextProvider(name));
+        return CustomBehaviourManager.Ins.CreateBehaviour<ITextProvider, TextProviderAttribute>(name);
     }
 }

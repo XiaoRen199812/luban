@@ -10,10 +10,10 @@ namespace Luban.Protobuf.DataTarget;
 [DataTarget("protobuf-json")]
 public class ProtobufJsonDataTarget : JsonDataTarget
 {
-    protected override string OutputFileExt => "json";
-    
+    protected override string DefaultOutputFileExt => "json";
+
     protected override JsonDataVisitor ImplJsonDataVisitor => ProtobufJsonDataVisitor.Ins;
-    
+
     public void WriteAsTable(List<Record> datas, Utf8JsonWriter x)
     {
         x.WriteStartObject();
@@ -29,7 +29,7 @@ public class ProtobufJsonDataTarget : JsonDataTarget
     }
 
     public override OutputFile ExportTable(DefTable table, List<Record> records)
-    {                  
+    {
         var ss = new MemoryStream();
         var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
         {

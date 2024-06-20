@@ -15,6 +15,23 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
 
     protected override ICodeStyle DefaultCodeStyle => CodeFormatManager.Ins.CppDefaultCodeStyle;
 
+    private static readonly HashSet<string> s_preservedKeyWords = new HashSet<string>
+    {
+        // cpp preserved key words
+        "alignas", "alignof", "and", "and_eq", "asm", "atomic_cancel", "atomic_commit", "atomic_noexcept",
+        "auto", "bitand", "bitor", "bool", "break", "case", "catch", "char", "char8_t", "char16_t", "char32_t",
+        "class", "compl", "concept", "const", "consteval", "constexpr", "constinit", "const_cast", "continue",
+        "co_await", "co_return", "co_yield", "decltype", "default", "delete", "do", "double", "dynamic_cast",
+        "else", "enum", "explicit", "export", "extern", "false", "float", "for", "friend", "goto", "if", "import", 
+        "inline", "int", "long", "module", "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr",
+        "operator", "or", "or_eq", "private", "protected", "public", "reflexpr", "register", "reinterpret_cast",
+        "requires", "return", "short", "signed", "sizeof", "static", "static_assert", "static_cast", "struct",
+        "switch", "synchronized", "template", "this", "thread_local", "throw", "true", "try", "typedef", "typeid",
+        "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
+    };
+
+    protected override IReadOnlySet<string> PreservedKeyWords => s_preservedKeyWords;
+
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         ctx.PushGlobal(new CppTemplateExtension());
@@ -62,7 +79,7 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         Task.WaitAll(enumTasks.ToArray());
         Task.WaitAll(beanTasks.ToArray());
         Task.WaitAll(tableTasks.ToArray());
-        
+
         var template = GetTemplate("schema_h");
         var tplCtx = CreateTemplateContext(template);
         var extraEnvs = new ScriptObject
@@ -79,10 +96,10 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         tplCtx.PushGlobal(extraEnvs);
         var schemaHeader = new CodeWriter();
         schemaHeader.Write(template.Render(tplCtx));
-        
-        return new OutputFile(){ File = outputFileName, Content = schemaHeader.ToResult(FileHeader) };
+
+        return new OutputFile() { File = outputFileName, Content = schemaHeader.ToResult(FileHeader) };
     }
-    
+
     private OutputFile GenerateSchemaCpp(GenerationContext ctx, List<DefBean> beans, string schemaHeaderFileName, string outputFileName)
     {
         var template = GetTemplate("schema_cpp");
@@ -98,29 +115,29 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         tplCtx.PushGlobal(extraEnvs);
         var schemaCpp = new CodeWriter();
         schemaCpp.Write(template.Render(tplCtx));
-        
-        return new OutputFile(){ File = outputFileName, Content = schemaCpp.ToResult(FileHeader) };
+
+        return new OutputFile() { File = outputFileName, Content = schemaCpp.ToResult(FileHeader) };
     }
-    
+
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
         string schemaFileNameWithoutExt = EnvManager.Current.GetOptionOrDefault(Name, "schemaFileNameWithoutExt", true, "schema");
         string schemaFileName = $"{schemaFileNameWithoutExt}.h";
         manifest.AddFile(GenerateSchemaHeader(ctx, schemaFileName));
-        
+
         var cppTasks = new List<Task<OutputFile>>();
         var beanTypes = ctx.ExportBeans;
 
         int typeCountPerStubFile = int.Parse(EnvManager.Current.GetOptionOrDefault(Name, "typeCountPerStubFile", true, "100"));
-        
+
         for (int i = 0, n = beanTypes.Count; i < n; i += typeCountPerStubFile)
         {
             int startIndex = i;
             cppTasks.Add(Task.Run(() =>
-                GenerateSchemaCpp(ctx, 
+                GenerateSchemaCpp(ctx,
                     beanTypes.GetRange(startIndex, Math.Min(typeCountPerStubFile, beanTypes.Count - startIndex)),
                     schemaFileName,
-                    $"{schemaFileNameWithoutExt}_{startIndex/typeCountPerStubFile}.cpp")));
+                    $"{schemaFileNameWithoutExt}_{startIndex / typeCountPerStubFile}.cpp")));
         }
 
         Task.WaitAll(cppTasks.ToArray());

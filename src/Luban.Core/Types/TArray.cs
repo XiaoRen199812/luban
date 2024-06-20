@@ -13,9 +13,9 @@ public class TArray : TType
     public override TType ElementType { get; }
 
     public override string TypeName => "array";
-    
+
     public int Dimension { get; } = 1;
-    
+
     public TType FinalElementType { get; protected set; }
 
     private TArray(bool isNullable, Dictionary<string, string> tags, TType elementType) : base(isNullable, tags)
@@ -42,7 +42,7 @@ public class TArray : TType
     public override void PostCompile(DefField field)
     {
         base.PostCompile(field);
-        
+
         if (ElementType is TBean e && !e.IsDynamic && e.DefBean.HierarchyFields.Count == 0)
         {
             throw new Exception($"container element type:'{e.DefBean.FullName}' can't be empty bean");
@@ -77,5 +77,10 @@ public class TArray : TType
     public override TR Apply<T1, T2, T3, TR>(ITypeFuncVisitor<T1, T2, T3, TR> visitor, T1 x, T2 y, T3 z)
     {
         return visitor.Accept(this, x, y, z);
+    }
+
+    public override TR Apply<T1, T2, T3, T4, TR>(ITypeFuncVisitor<T1, T2, T3, T4, TR> visitor, T1 x, T2 y, T3 z, T4 w)
+    {
+        return visitor.Accept(this, x, y, z, w);
     }
 }

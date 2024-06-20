@@ -12,7 +12,7 @@ namespace Luban.DataExporter.Builtin.Yaml;
 public class YamlDataVisitor : IDataFuncVisitor<YamlNode>
 {
     public static YamlDataVisitor Ins { get; } = new();
-    
+
     private static YamlScalarNode ToPlainNode(string x)
     {
         return new YamlScalarNode(x) { Style = ScalarStyle.Plain };
@@ -70,7 +70,7 @@ public class YamlDataVisitor : IDataFuncVisitor<YamlNode>
 
     public YamlNode Accept(DDateTime type)
     {
-        return ToPlainNode(type.UnixTimeOfCurrentContext.ToString());
+        return ToPlainNode(type.UnixTimeOfCurrentContext().ToString());
     }
 
     public YamlNode Accept(DBean type)

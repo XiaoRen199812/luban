@@ -7,6 +7,22 @@ namespace Luban.Utils;
 
 public static class DataUtil
 {
+    public static bool ParseBool(string s)
+    {
+        s = s.ToLower().Trim();
+        switch (s)
+        {
+            case "true":
+            case "1":
+                return true;
+            case "false":
+            case "0":
+                return false;
+            default:
+                throw new Exception($"{s} 不是 bool 类型的值 (true|1 或 false|0)");
+        }
+    }
+
     private static readonly string[] dateTimeFormats = new string[] {
         "yyyy-M-d HH:mm:ss", "yyyy-M-d HH:mm", "yyyy-M-d HH", "yyyy-M-d",
         //"yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM/dd HH", "yyyy/MM/dd",
@@ -35,9 +51,12 @@ public static class DataUtil
     {
         switch (s)
         {
-            case "null": return null;
-            case "\"\"": return string.Empty;
-            default: return s;
+            case "null":
+                return null;
+            case "\"\"":
+                return string.Empty;
+            default:
+                return s;
         }
     }
 
@@ -60,7 +79,7 @@ public static class DataUtil
         var multiEqaulChars = new StringBuilder();
         var result = new StringBuilder();
         var startIndex = s.EndsWith(']') ? 1 : 0;
-        for(int i = startIndex; i < 100 ;i++)
+        for (int i = startIndex; i < 100; i++)
         {
             if (i > 0)
             {
@@ -69,7 +88,7 @@ public static class DataUtil
             var multiEqualStr = multiEqaulChars.ToString();
             if (i == 0 || s.Contains(multiEqualStr))
             {
-                if (s.Contains("[" + multiEqualStr + "[") ||  s.Contains("]" + multiEqualStr + "]"))
+                if (s.Contains("[" + multiEqualStr + "[") || s.Contains("]" + multiEqualStr + "]"))
                 {
                     continue;
                 }
@@ -164,7 +183,7 @@ public static class DataUtil
         }
         return defType;
     }
-    
+
     private const string TAG_UNCHECKED = "unchecked";
 
     public static bool IsUnchecked(Record rec)
